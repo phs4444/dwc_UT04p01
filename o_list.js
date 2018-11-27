@@ -1,7 +1,7 @@
 "use strict";
 
 /* Page functions */
-var PERSON_LIST = create();
+var PERSONS_LIST = create();
 
 function cleanData() {
     document.getElementById("name").value = "";
@@ -11,11 +11,11 @@ function cleanData() {
 
 function add(name, surname, pos) {
     var error = document.getElementById("error");
-    var oList = document.getElementById("oList");
+    var list = document.getElementById("list");
     error.innerHTML = "";
     try {
-        add(PERSON_LIST, num);
-        oList.innerHTML = toString(PERSON_LIST);
+        add(PERSONS_LIST, num);
+        list.innerHTML = toString(PERSONS_LIST);
     } catch (err) {
         error.innerHTML = err;
     }
@@ -23,12 +23,12 @@ function add(name, surname, pos) {
 
 function removeByIndex(pos) {
     var error = document.getElementById("error");
-    var oList = document.getElementById("oList");
+    var list = document.getElementById("list");
     error.innerHTML = "";
     try {
-        (pos == "") ? remove(PERSON_LIST, lastElement(PERSON_LIST))
-            : remove(PERSON_LIST, pos);
-        oList.innerHTML = toString(PERSON_LIST);
+        (pos == "") ? remove(PERSONS_LIST, lastElement(PERSONS_LIST))
+            : remove(PERSONS_LIST, pos);
+        list.innerHTML = toString(PERSONS_LIST);
     } catch (err) {
         error.innerHTML = err;
     }
@@ -43,108 +43,130 @@ function Person(name, surname) {
     }
 }
 
-/* OList Functions */
-var MAX_ELEM_OLIST = 5;
+/* List Functions */
+var MAX_ELEM_LIST = 5;
 
 function create() {
-    var oList = [];
-    return oList;
+    var list = [];
+    return list;
 }
 
-function isEmpty(oList) {
-    return (oList.length === 0);
+function isEmpty(list) {
+    return (list.length === 0);
 }
 
-function isFull(oList) {
-    return (oList.length === MAX_ELEM_OLIST);
+function isFull(list) {
+    return (list.length === MAX_ELEM_LIST);
 }
 
-function size(oList) {
-    return oList.length;
+function size(list) {
+    return list.length;
 }
 
-/* add elem to the list and return size of list.
-use of localeCompare to sort the oList ( surname > name) */
-function add(oList, elem) {
+function add(list, elem) {
     if (!(elem instanceof Person)) throw new NotInstanceOf_Ex();
-    if (!isFull(oList)) {
-        oList.push(elem);
-        oList.sort(function (a, b) {
-             var r = a.surname.localeCompare(b.surname);
-             return (r == 0)? a.name.localeCompare(b.name) : r;
-            });
+    if (!isFull(list)) {
+        list.push(elem);
     } else throw new ListFull_Ex();
-    return size(oList);
+    return size(list);
 }
 
-function get(oList, index) {
+function addAt(list, elem, index) {
     index = parseInt(index);
-    if ((index >= size(oList) || (index < 0))) throw new IOB_Ex;
-    return oList[index];
+    if (!(elem instanceof Person)) throw new NotInstanceOf_Ex();
+    if (isNaN(index)) throw new NaNIndex_Ex();
+    if (!isFull(list)) {
+        if ((index >= size(list) || (index < 0))) throw new IOB_Ex();
+        list.splice(index, 0, elem);
+    } else throw new ListFull_Ex();
+    return size(list);
 }
 
-function toString(oList) {
+function get(list, index) {
+    index = parseInt(index);
+    if ((index >= size(list) || (index < 0))) throw new IOB_Ex();
+    return list[index];
+}
+
+function toString(list) {
     var str = "";
-    if (!isEmpty(oList)) {
-        var length = size(oList);
+    if (!isEmpty(list)) {
+        var length = size(list);
         for (var i = 0; i < length - 1; i++) {
-            str = str + oList[i].name + " " + oList[i].surname + " - ";
+            str = str + list[i].name + " " + list[i].surname + " - ";
         }
-        str = str + oList[i].name + " " + oList[i].surname;
+        str = str + list[i].name + " " + list[i].surname;
     }
     return str;
 }
 
-function indexOf(oList, elem) {
+function indexOf(list, elem) {
     if (!(elem instanceof Person)) throw new NotInstanceOf_Ex();
-    return oList.indexOf(elem);
+    return list.indexOf(elem);
 }
 
-function capacity(oList) {
-    return MAX_ELEM_OLIST;
+function lastIndexOf(list, elem) {
+    if (!(elem instanceof Person)) throw new NotInstanceOf_Ex();
+    return list.lastIndexOf(elem);
 }
 
-function clear(oList) {
-    if (!isEmpty(oList)) {
-        oList.splice(0, oList.length);
+function capacity(list) {
+    return MAX_ELEM_LIST;
+}
+
+function clear(list) {
+    if (!isEmpty(list)) {
+        list.splice(0, list.length);
     }
 }
 
-function firstElement(oList) {
+function firstElement(list) {
     var first;
-    if (!isEmpty(oList)) {
-        first = oList[0];
+    if (!isEmpty(list)) {
+        first = list[0];
     } else throw new ListEmpty_Ex();
     return first;
 }
 
-function lastElement(oList) {
+function lastElement(list) {
     var last;
-    if (!isEmpty(oList)) {
-        last = oList[size(oList) - 1];
+    if (!isEmpty(list)) {
+        last = list[size(list) - 1];
     } else throw new ListEmpty_Ex();
     return last;
 }
 
-function remove(oList, index) {
+/* No podemos devolver el elemento borrado tal cual. Devolveremos su toString */
+function remove(list, index) {
     var index = parseInt(index);
-    if ((index >= size(oList) || (index < 0))) throw new IOB_Ex();
-    if (isEmpty(oList)) throw new ListEmpty_Ex();
-    return oList.splice(index, 1);
+    if ((index >= size(list) || (index < 0))) throw new IOB_Ex();
+    if (isEmpty(list)) throw new ListEmpty_Ex();
+    var elemRemoved = list[index].fullname();
+    list.splice(index, 1);
+    return elemRemoved;
 }
 
-function removeElement(oList, elem) {
+function removeElement(list, elem) {
     if (!(elem instanceof Person)) throw new NotInstanceOf_Ex();
-    if (isEmpty(oList)) throw new ListEmpty_Ex();
-    var pos = indexOf(oList, elem); //return -1 if elem not in oList
-    if (pos != -1) oList.splice(pos, 1); //delete elem if its in oList
-    return size != oList.length;
+    if (isEmpty(list)) throw new ListEmpty_Ex();
+    var pos = indexOf(list, elem); //return -1 if elem not in list
+    if (pos != -1) list.splice(pos, 1); //delete elem if its in list
+    return size != list.length;
 }
 
+/* put elem in list[index], return toString of previous content */
+function set(list, elem, index) {
+    var index = parseInt(index);
+    if ((index >= size(list) || (index < 0))) throw new IOB_Ex();
+    if (!(elem instanceof Person)) throw new NotInstanceOf_Ex();
+        var elemAnt = list[index].fullname();
+        list[index] = elem;
+    return elemAnt;
+}
 
-function testoList() {
-    //var oList = create (); 	
-    var oList = [];
+function testlist() {
+    //var list = create (); 	
+    var list = [];
 
     var p1 = new Person("Juan", "Cuesta");
     var p2 = new Person("Antonio", "Recio");
@@ -154,41 +176,43 @@ function testoList() {
     var p6 = new Person("Michael", "Scott");
     
 
-    console.log("Capacidad: " + capacity(oList));
-    console.log("Es vacía: " + isEmpty(oList));
-    console.log("Longitud: " + size(oList));
+    console.log("Capacidad: " + capacity(list));
+    console.log("Es vacía: " + isEmpty(list));
+    console.log("Longitud: " + size(list));
 
     try {
-        console.log("Nº de elementos: " + add(oList, p1));
-        console.log("Nº de elementos: " + add(oList, p2));
-        console.log("Nº de elementos: " + add(oList, p3));
-        console.log("Nº de elementos: " + add(oList, p4));
+        console.log("Nº de elementos: " + add(list, p1));
+        console.log("Nº de elementos: " + add(list, p2));
+        console.log("Nº de elementos: " + add(list, p3));
+        console.log("Nº de elementos: " + add(list, p4));
        
-        console.log("The full oList: " + toString(oList));
-        console.log("Añado a la persona: Paco Gimeno. Deberá ordenarse como el resto de elementos: " + add(oList, p5));
-        add(oList, p6); //It will generate an exception.
+        console.log("The full list: " + toString(list));
+        console.log("Añado a la persona: Paco Gimeno. Deberá ordenarse como el resto de elementos: " + add(list, p5));
+        add(list, p6); //It will generate an exception.
     } catch (err) {
         console.log(err.toString());
     }
 
-    console.log("Busco la persona Paco Gimeno desde el principio: " + indexOf(oList, p5));
-    console.log("The full oList: " + toString(oList));
-    console.log("The first element oList: " + firstElement(oList).fullname());
-    console.log("The last element oList: " + lastElement(oList).fullname());
-    console.log("The element at index 3: " + get(oList, 3).fullname());
+    console.log("Busco la persona Paco Gimeno desde el principio: " + indexOf(list, p5));
+    console.log("Busco la persona Paco Gimeno desde el final: " + lastIndexOf(list, p5));
+    console.log("The full list: " + toString(list));
+    console.log("The first element list: " + firstElement(list).fullname());
+    console.log("The last element list: " + lastElement(list).fullname());
+    console.log("The element at index 3: " + get(list, 3).fullname());
 
-    //clear(oList);
+    //clear(list);
 
     try {
         while (true) {
-            console.log("Elimino elemento en index 3: " + remove(oList, 3));
-            console.log("Elimino la persona: Paco Gimeno si lo encuentra: " + removeElement(oList, p5));
-            console.log("The oList: " + toString(oList));
+            console.log("Elimino elemento en index 3: " + remove(list, 3));
+            console.log("Elimino la persona: Paco Gimeno si lo encuentra: " + removeElement(list, p5));
+            console.log("The list: " + toString(list));
+            console.log("Reemplazo elemento en index 1 por Michael Scott: " + set(list, p6, 1));
         }
     } catch (err) {
-        console.log(err.toString()); //When the oList is empty, an exception will be catched.
+        console.log(err.toString()); //When the list is empty, an exception will be catched.
     }
 
-    console.log("The oList: " + toString(oList));
+    console.log("The list: " + toString(list));
 }
-window.onload = testoList;
+window.onload = testlist;

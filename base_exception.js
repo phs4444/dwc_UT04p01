@@ -38,3 +38,10 @@ function ListEmpty_Ex() {
 }
 ListEmpty_Ex.prototype = new BaseException();
 ListEmpty_Ex.prototype.constructor = ListEmpty_Ex;
+
+function NaNIndex_Ex() {
+    this.name = "NaNIndex_Ex";
+    this.message = "The list is empty. You can't remove any element";
+}
+NaNIndex_Ex.prototype = new BaseException();
+NaNIndex_Ex.prototype.constructor = NaNIndex_Ex;

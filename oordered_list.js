@@ -79,7 +79,7 @@ function add(oList, elem) {
 
 function get(oList, index) {
     index = parseInt(index);
-    if ((index >= size(oList) || (index < 0))) throw new IOB_Ex;
+    if ((index >= size(oList) || (index < 0))) throw new IOB_Ex();
     return oList[index];
 }
 
@@ -126,11 +126,14 @@ function lastElement(oList) {
     return last;
 }
 
+/* No podemos devolver el elemento borrado tal cual. Devolveremos su toString */
 function remove(oList, index) {
     var index = parseInt(index);
     if ((index >= size(oList) || (index < 0))) throw new IOB_Ex();
     if (isEmpty(oList)) throw new ListEmpty_Ex();
-    return oList.splice(index, 1);
+    var elemRemoved = oList[index].fullname();
+    oList.splice(index, 1);
+    return elemRemoved;
 }
 
 function removeElement(oList, elem) {

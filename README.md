@@ -1,4 +1,8 @@
-##version 1.1
+## version 2.0
+- Finalizado o_list.js
+- Corregido errores en las funciones set(list, elem, index) y remove(list, index) para o_list.js y oordered_list.js
+    - No se puede devolver un objeto borrado. Devolvemos su toString en su lugar
+## version 1.1
 - Creación de esqueleto para list respecto a los anteriores archivos para ordered-list
 ## version 1.0
 - Creado base_exception.js para reutilizar captura de excepciones.
