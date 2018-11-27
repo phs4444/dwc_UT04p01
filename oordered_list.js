@@ -66,19 +66,23 @@ function size(oList) {
     return oList.length;
 }
 
+/* add elem to the list and return size of list.
+use of localeCompare to sort the oList ( surname > name) */
 function add(oList, elem) {
-    elem = parseInt(elem);
-    if (isNaN(elem)) throw "The element is not a number";
+    if (!(elem instanceof Person)) throw new NotInstanceOf_Ex();
     if (!isFull(oList)) {
         oList.push(elem);
-        oList.sort(function (a, b) { return a - b });
-    } else throw "The list is Full. You can't put the element in it";
+        oList.sort(function (a, b) {
+             var r = a.surname.localeCompare(b.surname);
+             return (r == 0)? a.name.localeCompare(b.name) : r;
+            });
+    } else throw new listFull_Ex();
     return size(oList);
 }
 
 function get(oList, index) {
     index = parseInt(index);
-    if ((index >= size(oList) || (index < 0))) throw "Index out of bounds";
+    if ((index >= size(oList) || (index < 0))) throw new IOB_Ex;
     return oList[index];
 }
 
@@ -87,16 +91,15 @@ function toString(oList) {
     if (!isEmpty(oList)) {
         var length = size(oList);
         for (var i = 0; i < length - 1; i++) {
-            str = str + oList[i] + " - ";
+            str = str + oList[i].name + " " + oList[i].surname + " - ";
         }
-        str = str + oList[i];
+        str = str + oList[i].name + " " + oList[i].surname;
     }
     return str;
 }
 
 function indexOf(oList, elem) {
-    elem = parseInt(elem);
-    if (isNaN(elem)) throw "The element is not a number";
+    if (!(elem instanceof Person)) throw new NotInstanceOf_Ex();
     return oList.indexOf(elem);
 }
 
@@ -114,7 +117,7 @@ function firstElement(oList) {
     var first;
     if (!isEmpty(oList)) {
         first = oList[0];
-    } else throw "The oList is empty.";
+    } else throw new ListEmpty_Ex();
     return first;
 }
 
@@ -122,33 +125,78 @@ function lastElement(oList) {
     var last;
     if (!isEmpty(oList)) {
         last = oList[size(oList) - 1];
-    } else throw "The oList is empty.";
+    } else throw new ListEmpty_Ex();
     return last;
 }
 
 function remove(oList, index) {
     var index = parseInt(index);
-    if ((index >= size(oList) || (index < 0))) throw "Index out of bounds";
-    if (isEmpty(oList)) throw "The list is empty. You can't remove any element";
+    if ((index >= size(oList) || (index < 0))) throw new IOB_Ex;
+    if (isEmpty(oList)) throw new ListEmpty_Ex();
     return oList.splice(index, 1);
 }
 
 function removeElement(oList, elem) {
-    var elem = parseInt(elem);
-    if (isNaN(elem)) throw "The element is not a number";
-    if (isEmpty(oList)) throw "The list is empty. You can't remove any element";
-    var size = oList.length;
-    var i = size - 1;
-    while (oList[i] >= elem) {
-        if (oList[i] === elem) oList.splice(i, 1);
-        i--;
-    }
+    if (!(elem instanceof Person)) throw new NotInstanceOf_Ex();
+    if (isEmpty(oList)) throw new ListEmpty_Ex();
+    var pos = indexOf(oList, elem); //return -1 if elem not in oList
+    if (pos != -1) oList.splice(i, 1); //delete elem if its in oList
     return size != oList.length;
 }
+
+/* Ours Exceptions */
+
+function BaseException() {
+}
+
+BaseException.prototype = new Error();
+BaseException.prototype.constructor = BaseException;
+BaseException.prototype.toString = function(){
+    return this.name + ": " + this.message;
+};
+
+function NotInstanceOf_Ex() {
+    this.name = "NotInstanceOf_Ex";
+    this.message = "The element is not a type of the list content";
+}
+NotInstanceOf_Ex.prototype = new BaseException();
+NotInstanceOf_Ex.prototype.constructor = NotInstanceOf_Ex;
+
+function ListFull_Ex() {
+    this.name = "ListFull_Ex";
+    this.message = "The list is Full. You can't put the element in it";
+}
+ListFull_Ex.prototype = new BaseException();
+ListFull_Ex.prototype.constructor = ListFull_Ex;
+
+function IOB_Ex() {
+    this.name = "IOB_Ex";
+    this.message = "Index Out of Bounds";
+}
+IOB_Ex.prototype = new BaseException();
+IOB_Ex.prototype.constructor = IOB_Ex;
+
+function ListEmpty_Ex() {
+    this.name = "ListEmpty_Ex";
+    this.message = "The list is empty. You can't remove any element";
+}
+ListEmpty_Ex.prototype = new BaseException();
+ListEmpty_Ex.prototype.constructor = ListEmpty_Ex;
+
 
 function testoList() {
     //var oList = create (); 	
     var oList = [];
+
+    var p1 = new Person("Juan", "Cuesta");
+    var p2 = new Person("Antonio", "Recio");
+    var p3 = new Person("Carlos", "Alcántara");
+    var p4 = new Person("Enjuto", "Mojamuto");
+    var p5 = new Person("Paco", "Gimeno");
+    var p6 = new Person("Michael", "Scott");
+    
+    
+
     console.log("Capacidad: " + capacity(oList));
     console.log("Es vacía: " + isEmpty(oList));
     console.log("Longitud: " + size(oList));
@@ -156,17 +204,20 @@ function testoList() {
     try {
 
 
-        for (var i = 0; i < MAX_ELEM_OLIST - 1; i++) {
-            console.log("Nº de elementos: " + add(oList, Math.floor(Math.random() * 100) + 1));
-        }
+        
+            console.log("Nº de elementos: " + add(OList, p1));
+            console.log("Nº de elementos: " + add(OList, p2));
+            console.log("Nº de elementos: " + add(OList, p3));
+            console.log("Nº de elementos: " + add(OList, p4));
+       
         console.log("The full oList: " + toString(oList));
-        console.log("Añado el número 55, deberá ordenarse como el resto de elementos: " + add(oList, 55));
-        add(oList, 66); //It will generate an exception.
+        console.log("Añado a la persona: " + p5.toString + ". Deberá ordenarse como el resto de elementos: " + add(oList, p5));
+        add(oList, p6); //It will generate an exception.
     } catch (err) {
         console.log(err);
     }
 
-    console.log("Busco el valor 55 desde el principio: " + indexOf(oList, 55));
+    console.log("Busco la persona Paco Gimeno desde el principio: " + indexOf(oList, p5));
     console.log("The full oList: " + toString(oList));
     console.log("The first element oList: " + firstElement(oList));
     console.log("The last element oList: " + lastElement(oList));
