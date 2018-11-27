@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Implementación de una lista de objetos</title>
+  <meta charset="utf-8" />
+</head>
+
+<body>
+  <h1>Implementación de una lista de personas</h1>
+  <h4>Introducir nueva persona:</h4>
+  Introduce nombre:
+  <input type="text" id="name" value="" placeholder="John" onfocus="cleanData ()" /><br>
+  Introduce apellido:
+  <input type="text" id="surname" value="" placeholder="Doe" onfocus="this.value=''" /><br>
+  Introduce una posición:
+  <input type="text" id="pos" value="" placeholder="Entero" onfocus="this.value=''" /><br>
+  <pre style="color: darkolivegreen">
+    En caso de no introducir posición se 
+    operará con la última de la lista. 
+    Primera posición de una lista: 0</pre>
+
+  <button id="addButton" onclick="add (document.getElementById ('name').value, document.getElementById ('surname').value);">Añade persona</button>
+
+  <button id="pollButton" onclick="removeByIndex (document.getElementById('pos').value);">Borrar persona de la posición</button>
+
+  <br /><br />
+
+  <p id="error" style="color:red"></p>
+  <div id="oList">
+  </div>
+  <script src="o_list.js"></script>
+  <script src="base_exception.js"></script>
+</body>
+
+</html>

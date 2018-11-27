@@ -1,3 +1,5 @@
+##version 1.1
+- Creación de esqueleto para list respecto a los anteriores archivos para ordered-list
 ## version 1.0
 - Creado base_exception.js para reutilizar captura de excepciones.
 - Modificación de objects_ordered_list.html para incluir el js anterior.
